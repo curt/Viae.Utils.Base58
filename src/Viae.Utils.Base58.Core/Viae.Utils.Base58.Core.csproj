@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Let GitVersioning handle versioning -->
+    <!-- Remove any <Version> tag -->
+    <!-- Package metadata -->
+    <PackageId>Viae.Utils.Base58Id.Core</PackageId>
+    <Authors>Curt Gilman</Authors>
+    <Description>Base58 encoding/decoding utility with type-safe Base58Id</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/curt/Viae.Utils.Base58Id</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/curt/Viae.Utils.Base58Id</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>base58;encoding;id</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.6.139">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>

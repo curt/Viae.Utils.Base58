@@ -1,0 +1,42 @@
+# Root .editorconfig — affects all C# files in this repo
+root = true
+
+[*.cs]
+
+##########################
+# General analyzer setup #
+##########################
+
+# Enforce use of analyzers and code style
+dotnet_analyzer_diagnostic.severity = warning
+
+# Treat specific analyzer categories as warnings (visible in Problems panel)
+dotnet_analyzer_diagnostic.category-Style.severity = warning
+dotnet_analyzer_diagnostic.category-Simplification.severity = warning
+dotnet_analyzer_diagnostic.category-Formatting.severity = warning
+dotnet_analyzer_diagnostic.category-Reliability.severity = warning
+dotnet_analyzer_diagnostic.category-Performance.severity = warning
+dotnet_analyzer_diagnostic.category-Design.severity = warning
+dotnet_analyzer_diagnostic.category-Maintainability.severity = warning
+dotnet_analyzer_diagnostic.category-Naming.severity = warning
+dotnet_analyzer_diagnostic.category-Usage.severity = warning
+dotnet_analyzer_diagnostic.category-CodeQuality.severity = warning
+dotnet_analyzer_diagnostic.category-MSTest.severity = warning
+
+# Overrides
+dotnet_diagnostic.IDE0008.severity = none
+dotnet_diagnostic.IDE0022.severity = none
+dotnet_diagnostic.IDE0023.severity = none
+dotnet_diagnostic.IDE0024.severity = none
+dotnet_diagnostic.IDE0055.severity = none
+dotnet_diagnostic.IDE0058.severity = none
+dotnet_diagnostic.IDE0160.severity = none
+
+############################################
+# Overrides for the tests folder only
+############################################
+[tests/**/*.cs]
+# Disable CA1305: Behavior of DateTime.Parse(string) could vary
+dotnet_diagnostic.CA1305.severity = none
+# Disable CA1707: Remove underscores from member name
+dotnet_diagnostic.CA1707.severity = none
