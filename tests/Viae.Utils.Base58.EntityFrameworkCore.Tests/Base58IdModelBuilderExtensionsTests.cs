@@ -2,10 +2,8 @@
 
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Viae.Utils.Base58.Core;
-using Viae.Utils.Base58.EntityFrameworkCore;
 
 namespace Viae.Utils.Base58.EntityFrameworkCore.Tests;
 
@@ -26,10 +24,12 @@ public class Base58IdModelBuilderExtensionsTests
             using var context = new TestDbContext(options);
 
             // Act
-            context.Model.GetEntityTypes()
+            context
+                .Model.GetEntityTypes()
                 .SelectMany(e => e.GetProperties())
                 .Where(p => p.ClrType == typeof(Base58Id))
-                .Should().NotBeEmpty("there should be Base58Id properties");
+                .Should()
+                .NotBeEmpty("there should be Base58Id properties");
 
             // Assert - Check that Base58Id properties are configured
             foreach (var entityType in context.Model.GetEntityTypes())
@@ -84,7 +84,9 @@ public class Base58IdModelBuilderExtensionsTests
 
             // Act
             var entityType = context.Model.FindEntityType(typeof(EntityWithConventionalId))!;
-            var idProperty = entityType.FindProperty(nameof(EntityWithConventionalId.EntityWithConventionalIdId))!;
+            var idProperty = entityType.FindProperty(
+                nameof(EntityWithConventionalId.EntityWithConventionalIdId)
+            )!;
 
             // Assert
             idProperty.GetValueGeneratorFactory().Should().NotBeNull();
@@ -101,8 +103,12 @@ public class Base58IdModelBuilderExtensionsTests
             using var context = new TestDbContext(options);
 
             // Act
-            var entityType = context.Model.FindEntityType(typeof(EntityWithMultipleBase58Properties))!;
-            var codeProperty = entityType.FindProperty(nameof(EntityWithMultipleBase58Properties.Code))!;
+            var entityType = context.Model.FindEntityType(
+                typeof(EntityWithMultipleBase58Properties)
+            )!;
+            var codeProperty = entityType.FindProperty(
+                nameof(EntityWithMultipleBase58Properties.Code)
+            )!;
 
             // Assert
             codeProperty.GetValueGeneratorFactory().Should().BeNull();
@@ -174,7 +180,7 @@ public class Base58IdModelBuilderExtensionsTests
                 {
                     Id = new Base58Id(100),
                     Code = new Base58Id(200),
-                    ReferenceId = new Base58Id(300)
+                    ReferenceId = new Base58Id(300),
                 };
 
                 // Act
@@ -311,26 +317,26 @@ public class Base58IdModelBuilderExtensionsTests
     }
 
     // Test entities
-    private class EntityWithId
+    private sealed class EntityWithId
     {
         public Base58Id Id { get; set; }
         public string Name { get; set; } = string.Empty;
     }
 
-    private class EntityWithConventionalId
+    private sealed class EntityWithConventionalId
     {
         public Base58Id EntityWithConventionalIdId { get; set; }
         public string Name { get; set; } = string.Empty;
     }
 
-    private class EntityWithMultipleBase58Properties
+    private sealed class EntityWithMultipleBase58Properties
     {
         public Base58Id Id { get; set; }
         public Base58Id Code { get; set; }
         public Base58Id ReferenceId { get; set; }
     }
 
-    private class ManuallyConfiguredEntity
+    private sealed class ManuallyConfiguredEntity
     {
         public int Id { get; set; }
         public Base58Id CustomId { get; set; }
@@ -338,13 +344,12 @@ public class Base58IdModelBuilderExtensionsTests
     }
 
     // Test DbContext
-    private class TestDbContext : DbContext
+    private sealed class TestDbContext(DbContextOptions<TestDbContext> options) : DbContext(options)
     {
-        public TestDbContext(DbContextOptions<TestDbContext> options) : base(options) { }
-
         public DbSet<EntityWithId> Entities { get; set; } = null!;
         public DbSet<EntityWithConventionalId> ConventionalEntities { get; set; } = null!;
-        public DbSet<EntityWithMultipleBase58Properties> MultiPropertyEntities { get; set; } = null!;
+        public DbSet<EntityWithMultipleBase58Properties> MultiPropertyEntities { get; set; } =
+            null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -352,15 +357,15 @@ public class Base58IdModelBuilderExtensionsTests
         }
     }
 
-    private class ManualConfigDbContext : DbContext
+    private sealed class ManualConfigDbContext(DbContextOptions<ManualConfigDbContext> options)
+        : DbContext(options)
     {
-        public ManualConfigDbContext(DbContextOptions<ManualConfigDbContext> options) : base(options) { }
-
         public DbSet<ManuallyConfiguredEntity> ManualEntities { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ManuallyConfiguredEntity>()
+            modelBuilder
+                .Entity<ManuallyConfiguredEntity>()
                 .Property(e => e.CustomId)
                 .HasBase58IdConversion();
         }

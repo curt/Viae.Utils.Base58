@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Viae.Utils.Base58.Core;
-using Viae.Utils.Base58.EntityFrameworkCore;
 
 namespace Viae.Utils.Base58.EntityFrameworkCore.Tests;
 
@@ -57,7 +56,7 @@ public class Base58IdValueGeneratorTests
             var result = generator.Next(entry);
 
             // Assert
-            result.Should().NotBe(default(Base58Id));
+            result.Should().NotBe(default);
             result.Value.Should().BeGreaterThan(0);
         }
 
@@ -129,21 +128,27 @@ public class Base58IdValueGeneratorTests
             // Act - Generate IDs from multiple threads
             for (int i = 0; i < 10; i++)
             {
-                tasks.Add(Task.Run(() =>
-                {
-                    for (int j = 0; j < 100; j++)
+                tasks.Add(
+                    Task.Run(() =>
                     {
-                        var id = generator.Next(entry);
-                        generatedIds.Add(id.Value);
-                    }
-                }));
+                        for (int j = 0; j < 100; j++)
+                        {
+                            var id = generator.Next(entry);
+                            generatedIds.Add(id.Value);
+                        }
+                    })
+                );
             }
 
-            Task.WaitAll(tasks.ToArray());
+            Task.WaitAll([.. tasks]);
 
             // Assert
             generatedIds.Count.Should().Be(1000);
-            generatedIds.Distinct().Count().Should().Be(1000, "all generated IDs should be unique even when generated concurrently");
+            generatedIds
+                .Distinct()
+                .Count()
+                .Should()
+                .Be(1000, "all generated IDs should be unique even when generated concurrently");
         }
 
         [TestMethod]
@@ -168,7 +173,7 @@ public class Base58IdValueGeneratorTests
             }
         }
 
-        private static EntityEntry CreateMockEntityEntry()
+        private static EntityEntry<TestEntity> CreateMockEntityEntry()
         {
             // Create a minimal DbContext for testing
             var options = new DbContextOptionsBuilder<TestDbContext>()
@@ -182,16 +187,14 @@ public class Base58IdValueGeneratorTests
     }
 
     // Test entities and context
-    private class TestEntity
+    private sealed class TestEntity
     {
         public Base58Id Id { get; set; }
         public string Name { get; set; } = string.Empty;
     }
 
-    private class TestDbContext : DbContext
+    private sealed class TestDbContext(DbContextOptions<TestDbContext> options) : DbContext(options)
     {
-        public TestDbContext(DbContextOptions<TestDbContext> options) : base(options) { }
-
         public DbSet<TestEntity> TestEntities { get; set; } = null!;
     }
 }
