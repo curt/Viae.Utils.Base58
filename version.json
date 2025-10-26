@@ -1,9 +1,13 @@
 {
     "$schema": "https://raw.githubusercontent.com/dotnet/Nerdbank.GitVersioning/main/src/NerdBank.GitVersioning/version.schema.json",
-    "version": "0.1.2-alfa.{height}",
+    "version": "0.1.3-alfa.{height}",
     "publicReleaseRefSpec": [
         "^refs/tags/v\\d+\\.\\d+"
     ],
+    "gitCommitIdShortFixedLength": 7,
+    "nugetPackageVersion": {
+        "semVer": 2
+    },
     "cloudBuild": {
         "buildNumber": {
             "enabled": true
