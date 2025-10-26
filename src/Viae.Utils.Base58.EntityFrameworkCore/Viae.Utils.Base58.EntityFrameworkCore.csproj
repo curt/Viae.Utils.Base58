@@ -33,4 +33,7 @@
   <ItemGroup>
     <ProjectReference Include="../Viae.Utils.Base58.Core/Viae.Utils.Base58.Core.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 </Project>
