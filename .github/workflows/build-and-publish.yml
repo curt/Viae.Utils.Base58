@@ -1,0 +1,95 @@
+name: Build and Publish
+
+on:
+  push:
+    branches:
+      - dev
+    tags:
+      - "v*.*.*"
+  pull_request:
+    branches:
+      - dev
+
+env:
+  DOTNET_VERSION: "10.0.x"
+  NUGET_SOURCE: "https://api.nuget.org/v3/index.json"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for GitVersioning
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install Nerdbank.GitVersioning
+        run: dotnet tool install -g nbgv
+
+      - name: Set version
+        id: nbgv
+        run: |
+          nbgv cloud
+          echo "Version=$(nbgv get-version -v NuGetPackageVersion)" >> $GITHUB_OUTPUT
+          echo "SimpleVersion=$(nbgv get-version -v SimpleVersion)" >> $GITHUB_OUTPUT
+
+      - name: Display build information
+        run: |
+          echo "Building version ${{ steps.nbgv.outputs.Version }}"
+          echo "Simple version ${{ steps.nbgv.outputs.SimpleVersion }}"
+          echo "NuGet push enabled: ${{ vars.ENABLE_NUGET_PUSH }}"
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build --verbosity normal
+
+      - name: Pack YourProject.Base58
+        run: dotnet pack src/Viae.Utils.Base58.Core/Viae.Utils.Base58.Core.csproj --configuration Release --no-build --output ./artifacts
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-packages-${{ steps.nbgv.outputs.SimpleVersion }}
+          path: ./artifacts/*.nupkg
+
+      - name: Publish to NuGet (dev branch)
+        if: github.ref == 'refs/heads/dev' && github.event_name == 'push' && vars.ENABLE_NUGET_PUSH == 'true'
+        run: |
+          dotnet nuget push ./artifacts/*.nupkg \
+            --source ${{ env.NUGET_SOURCE }} \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --skip-duplicate
+
+      - name: Publish to NuGet (release tag)
+        if: startsWith(github.ref, 'refs/tags/v') && vars.ENABLE_NUGET_PUSH == 'true'
+        run: |
+          dotnet nuget push ./artifacts/*.nupkg \
+            --source ${{ env.NUGET_SOURCE }} \
+            --api-key ${{ secrets.NUGET_API_KEY }} \
+            --skip-duplicate
+
+      - name: NuGet publishing skipped
+        if: (github.ref == 'refs/heads/dev' || startsWith(github.ref, 'refs/tags/v')) && vars.ENABLE_NUGET_PUSH != 'true'
+        run: |
+          echo "::notice::NuGet publishing is disabled. Set ENABLE_NUGET_PUSH repository variable to 'true' to enable."
+          echo "Packages are available as build artifacts for local testing."
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./artifacts/*.nupkg
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
