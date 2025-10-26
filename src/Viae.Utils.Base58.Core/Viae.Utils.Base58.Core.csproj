@@ -7,12 +7,12 @@
     <!-- Let GitVersioning handle versioning -->
     <!-- Remove any <Version> tag -->
     <!-- Package metadata -->
-    <PackageId>Viae.Utils.Base58Id.Core</PackageId>
+    <PackageId>Viae.Utils.Base58.Core</PackageId>
     <Authors>Curt Gilman</Authors>
     <Description>Base58 encoding/decoding utility with type-safe Base58Id</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/curt/Viae.Utils.Base58Id</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/curt/Viae.Utils.Base58Id</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/curt/Viae.Utils.Base58</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/curt/Viae.Utils.Base58</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>base58;encoding;id</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>

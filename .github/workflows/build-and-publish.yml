@@ -54,7 +54,7 @@ jobs:
       - name: Test
         run: dotnet test --configuration Release --no-build --verbosity normal
 
-      - name: Pack YourProject.Base58
+      - name: Pack Viae.Utils.Base58.Core
         run: dotnet pack src/Viae.Utils.Base58.Core/Viae.Utils.Base58.Core.csproj --configuration Release --no-build --output ./artifacts
 
       - name: Upload artifacts
