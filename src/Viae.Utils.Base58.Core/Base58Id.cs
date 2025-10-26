@@ -57,7 +57,7 @@ public readonly struct Base58Id : IEquatable<Base58Id>, IComparable<Base58Id>
     // Equality
     public bool Equals(Base58Id other) => Value == other.Value;
 
-    public override bool Equals(object obj) => obj is Base58Id other && Equals(other);
+    public override bool Equals(object? obj) => obj is Base58Id other && Equals(other);
 
     public override int GetHashCode() => Value.GetHashCode();
 

@@ -100,12 +100,14 @@ public static class Base58Converter
                 var digit = Base58Alphabet.IndexOf(c);
                 if (digit < 0)
                 {
+                    value = 0;
                     return false;
                 }
 
                 // Check for overflow before multiplication
                 if (value > ulong.MaxValue / 58)
                 {
+                    value = 0;
                     return false;
                 }
 
@@ -114,6 +116,7 @@ public static class Base58Converter
                 // Additional overflow check after addition
                 if (newValue < value)
                 {
+                    value = 0;
                     return false;
                 }
 
