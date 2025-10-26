@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net6.0;net8.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <!-- Package metadata -->
+    <PackageId>Viae.Utils.Base58.EntityFrameworkCore</PackageId>
+    <Authors>Curt Gilman</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/curt/Viae.Utils.Base58</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/curt/Viae.Utils.Base58</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>base58;encoding;id</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+  <!-- EF Core 3.1+ for .NET Standard 2.0 (legacy/broad compatibility) -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[3.1.0,)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[3.1.0,)" />
+  </ItemGroup>
+  <!-- EF Core 6.0+ for .NET 6 -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[6.0.0,)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[6.0.0,)" />
+  </ItemGroup>
+  <!-- EF Core 8.0+ for .NET 8+ (enables conventions) -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="[8.0.0,)" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="[8.0.0,)" />
+  </ItemGroup>
+  <!-- Reference to your Base58 library -->
+  <ItemGroup>
+    <ProjectReference Include="../Viae.Utils.Base58.Core/Viae.Utils.Base58.Core.csproj" />
+  </ItemGroup>
+</Project>

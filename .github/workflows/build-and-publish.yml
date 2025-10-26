@@ -57,6 +57,9 @@ jobs:
       - name: Pack Viae.Utils.Base58.Core
         run: dotnet pack src/Viae.Utils.Base58.Core/Viae.Utils.Base58.Core.csproj --configuration Release --no-build --output ./artifacts
 
+      - name: Pack Viae.Utils.Base58.EntityFrameworkCore
+        run: dotnet pack src/Viae.Utils.Base58.EntityFrameworkCore/Viae.Utils.Base58.EntityFrameworkCore.csproj --configuration Release --no-build --output ./artifacts
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
